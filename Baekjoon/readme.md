@@ -1,4 +1,4 @@
-[![Solved.ac Profile](http://mazassumnida.wtf/api/v2/generate_badge?boj=백준아이디)](https://solved.ac/khyp1210/)
+[![Solved.ac Profile](http://mazassumnida.wtf/api/v2/generate_badge?boj=khyp1210)](https://solved.ac/khyp1210/)
 
 **■단계별로 풀어보기**
 |알고리즘|총 문제|푼 문제|완수 여부|
