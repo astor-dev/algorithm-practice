@@ -1,6 +1,6 @@
 # Algorithm_practice
 
----
+
 
 **1. 백준**
 
