@@ -3,6 +3,8 @@
 
 
 **1. 백준**
+
+
 [![Solved.ac Profile](http://mazassumnida.wtf/api/v2/generate_badge?boj=khyp1210)](https://solved.ac/khyp1210/)
 
 **■단계별로 풀어보기**
