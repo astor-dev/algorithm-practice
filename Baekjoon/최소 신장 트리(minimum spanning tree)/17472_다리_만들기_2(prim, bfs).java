@@ -7,7 +7,7 @@ public class Main{
     static int n;
     static int m;
     static ArrayList<ArrayList<Edge>> edges;
-    static boolean[][] DFS_visited;
+    static boolean[][] BFS_visited;
     static int idCounter = 0;
     static ArrayList<ArrayList<Island>> islandGraph = new ArrayList<>();
     
@@ -19,7 +19,7 @@ public class Main{
             st = new StringTokenizer(br.readLine());
             n = Integer.parseInt(st.nextToken());
             m = Integer.parseInt(st.nextToken());
-            DFS_visited = new boolean[n][m];
+            BFS_visited = new boolean[n][m];
             int[][] graph = new int[n][m];            
             for(int i = 0; i < n; i++){
                 ArrayList<Island> islandGraphRow = new ArrayList<Island>();
@@ -29,15 +29,15 @@ public class Main{
                     int value = Integer.parseInt(st.nextToken());
                     graph[i][j] = value;
                     if(value == 0){
-                        DFS_visited[i][j] = true;
+                        BFS_visited[i][j] = true;
                     }
                 }
                 islandGraph.add(islandGraphRow);
             }
-//             DFS로 섬 단위 판별하기
+//             BFS로 섬 단위 판별하기
             for(int i = 0; i < n; i++){
                 for(int j = 0; j < m; j++){
-                    DFS(new int[]{i,j});
+                    BFS(new int[]{i,j});
                 }
             }
             edges = new ArrayList<>(idCounter);
@@ -147,8 +147,8 @@ public class Main{
     }    
     
 
-    static void DFS(int[] xy){
-        if(DFS_visited[xy[0]][xy[1]])
+    static void BFS(int[] xy){
+        if(BFS_visited[xy[0]][xy[1]])
             return;
         
         int[][] dxys = new int[][]{
@@ -172,10 +172,10 @@ public class Main{
                 if(dx < 0 || dx >= n || dy < 0 || dy >= m){
                     continue;
                 }
-                if(DFS_visited[dx][dy])
+                if(BFS_visited[dx][dy])
                     continue;
                 queue.add(new int[]{dx, dy});
-                DFS_visited[dx][dy] = true;
+                BFS_visited[dx][dy] = true;
                 islandGraph.get(dx).set(dy, island);
             }
         }
