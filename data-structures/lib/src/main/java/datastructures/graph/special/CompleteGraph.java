@@ -1,5 +1,7 @@
 package datastructures.graph.special;
 
+import datastructures.graph.UndirectedGraph;
+
 import java.util.List;
 
 /**

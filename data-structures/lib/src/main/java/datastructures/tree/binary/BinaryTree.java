@@ -1,6 +1,9 @@
 package datastructures.tree.binary;
 
 
+import datastructures.tree.Tree;
+import datastructures.tree.TreeNode;
+
 /**
  * 이진 트리 ADT 인터페이스
  * @param <T> 데이터 타입

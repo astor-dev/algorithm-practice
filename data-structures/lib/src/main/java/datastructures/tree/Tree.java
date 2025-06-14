@@ -1,5 +1,7 @@
 package datastructures.tree;
 
+import datastructures.common.DataStructure;
+
 import java.util.List;
 
 /**

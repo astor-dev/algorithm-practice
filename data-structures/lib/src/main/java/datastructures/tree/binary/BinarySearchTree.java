@@ -1,5 +1,7 @@
 package datastructures.tree.binary;
 
+import datastructures.tree.TreeNode;
+
 import java.util.List;
 
 /**

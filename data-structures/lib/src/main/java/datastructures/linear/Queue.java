@@ -1,5 +1,7 @@
 package datastructures.linear;
 
+import datastructures.common.DataStructure;
+
 /**
  * 큐 ADT 인터페이스
  * @param <T> 데이터 타입

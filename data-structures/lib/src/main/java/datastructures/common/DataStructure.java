@@ -1,4 +1,4 @@
-package datastructures;
+package datastructures.common;
 
 /**
  * 모든 자료구조의 기본 인터페이스
