@@ -1,5 +1,3 @@
-package playground;
-
 import java.io.*;
 import java.util.*;
 import java.util.stream.*;
