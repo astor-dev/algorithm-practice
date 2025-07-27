@@ -1,142 +1,72 @@
 import java.io.*;
 import java.util.*;
-import java.util.stream.*;
 
-public class Main{
 
-//     static variables
-    
-//     ================
-    public static void main(String[] args) throws Exception {
-        try{                    
-            // BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            // BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-            // StringTokenizer st;
-            MST mst = new MST();
-            
-            mst.init();
-            mst.getEdges();
-            mst.kruskal();
-            
-            
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();            
+public class Main {
+    static class Edge implements Comparable<Edge> {
+        int u;
+        int v;
+        int weight;
+        Edge(int u, int v, int weight) {
+            this.u = u;
+            this.v = v;
+            this.weight = weight;
         }
 
+        @Override
+        public int compareTo(Edge target) {
+            return this.weight - target.weight;
+        }
     }
-//     static methods        
-//     ==============
-}    
 
-class MST{
-    private int nOfNode;
-    private int nOfEdge;
-    private BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    private StringTokenizer st;
-    private ArrayList<Integer> UFList;
-    private PriorityQueue<Edge> edges;
-    
-    MST(){}
-    
-    public void init(){
-        try{
+    public static int[] rank;
+    public static int[] parent;
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int V = Integer.parseInt(st.nextToken()), E = Integer.parseInt(st.nextToken());
+        rank = new int[V+1];
+        parent = new int[V+1];
+        PriorityQueue<Edge> pq = new PriorityQueue<>();
+        for(int i = 1; i <= V; i++) parent[i] = i;
+        while(E-- > 0) {
             st = new StringTokenizer(br.readLine());
-            nOfNode = Integer.parseInt(st.nextToken());
-            nOfEdge = Integer.parseInt(st.nextToken());
-            edges = new PriorityQueue<>(nOfEdge);
-            
-            UFList = new ArrayList<Integer>(nOfNode + 1);
-            for(int i = 0; i<= nOfNode; i++){
-                UFList.add(i);
-            }
-        } catch(IOException e){}
-    }
-    
-    
-    public void getEdges(){
-        for(int i = 0; i <nOfEdge; i++){
-            try{
-                st = new StringTokenizer(br.readLine());
-                Edge e = new Edge()
-                    .setNode1(Integer.parseInt(st.nextToken()))
-                    .setNode2(Integer.parseInt(st.nextToken()))
-                    .setWeight(Integer.parseInt(st.nextToken()));
-                
-                edges.add(e);                
-            } catch(IOException e){}
+            int u = Integer.parseInt(st.nextToken()), v = Integer.parseInt(st.nextToken()), weight = Integer.parseInt(st.nextToken());
+            Edge edge = new Edge(u,v,weight);
+            pq.add(edge);
         }
-    }
-    
-    public void kruskal(){
-        int counter = 0;        
         int totalWeight = 0;
-        while(counter != (nOfNode -1)){
-            Edge e = edges.poll();            
-            if(union(e.getNode1(), e.getNode2())){
-                counter+=1;
-                totalWeight+=e.getWeight();
+        while(!pq.isEmpty()) {
+            Edge edge = pq.poll();
+            boolean noCycle = union(edge.u, edge.v);
+            if(noCycle) {
+                totalWeight += edge.weight;
             }
         }
-        System.out.println(totalWeight);
+        System.out.print(String.valueOf(totalWeight));
     }
-    
-    private boolean union(int x, int y){
-        x = find(x);
-        y = find(y);
-        
-        if(x==y){
-            return false;
-        }
-        
-        if(x < y){
-            UFList.set(y,x);
+
+    static int find(int node){
+        if(parent[node] != node) parent[node] = find(parent[node]);
+        return parent[node];
+    }
+
+    static boolean union(int node1, int node2){
+        int parent1 = find(node1), parent2 = find(node2);
+        if(parent1 != parent2) {
+            if (rank[parent1] > rank[parent2]) {
+                // 랭크 낮은 쪽을 높은 쪽에 합침
+                parent[parent2] = parent1;
+            } else {
+                parent[parent1] = parent2;
+                if (rank[parent1] == rank[parent2]) {
+                    rank[parent2]++;
+                }
+            }
             return true;
         }
-        UFList.set(x,y);
-        return true;
-    }
-    
-    private int find(int x){
-        if(x == UFList.get(x))
-            return x;
-        
-        return find(UFList.get(x));
-    }
-}
-
-class Edge implements Comparable<Edge>{
-    private int node1;
-    private int node2;
-    private int weight;
-    
-    public int getNode1(){
-        return node1;
-    }
-    
-    public int getNode2(){
-        return node2;
-    }
-    public int getWeight(){
-        return weight;
-    }
-    public Edge setNode1(int node1){
-        this.node1 = node1;
-        return this;
-    }
-    
-    public Edge setNode2(int node2){
-        this.node2 = node2;
-        return this;
-    }
-    
-    public Edge setWeight(int weight){
-        this.weight = weight;
-        return this;
-    }
-    
-    @Override
-    public int compareTo(Edge target){
-        return this.weight - target.weight;
+        return false;
     }
 }

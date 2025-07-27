@@ -6,53 +6,70 @@ import java.util.*;
 
 
 public class Main {
-
-    public static class Node {
-        Node parent;
-        int rank;
-
-        Node(){
-            this.parent = this;
-            this.rank = 0;
+    static class Edge implements Comparable<Edge> {
+        int u;
+        int v;
+        int weight;
+        Edge(int u, int v, int weight) {
+            this.u = u;
+            this.v = v;
+            this.weight = weight;
         }
 
-        public Node find() {
-            if (parent != this) parent = parent.find();
-            return parent;
-        }
-
-        public void union (Node target) {
-            Node root = this.find();
-            Node targetRoot = target.find();
-
-            if (root == targetRoot) return;
-
-            if (root.rank < targetRoot.rank) {
-                root.parent = targetRoot;
-            } else {
-                targetRoot.parent = root;
-                if(root.rank == targetRoot.rank) root.rank ++;
-            }
-        }
-
-        public String isConnected(Node target) {
-            return this.find() == target.find() ? "YES" : "NO";
+        @Override
+        public int compareTo(Edge target) {
+            return this.weight - target.weight;
         }
     }
+
+    public static int[] rank;
+    public static int[] parent;
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        StringBuilder sb = new StringBuilder();
-        int n = Integer.parseInt(st.nextToken()), m = Integer.parseInt(st. nextToken());
-        Node[] graph = new Node[n+1];
-        for (int i = 0; i <= n; i++) graph[i] = new Node();
-        while (m-- > 0) {
+
+        int V = Integer.parseInt(st.nextToken()), E = Integer.parseInt(st.nextToken());
+        rank = new int[V+1];
+        parent = new int[V+1];
+        PriorityQueue<Edge> pq = new PriorityQueue<>();
+        for(int i = 1; i <= V; i++) parent[i] = i;
+        while(E-- > 0) {
             st = new StringTokenizer(br.readLine());
-            boolean isUnion = "0".equals(st.nextToken());
-            int a = Integer.parseInt(st.nextToken()), b = Integer.parseInt(st.nextToken());
-            if(isUnion) graph[a].union(graph[b]);
-            else sb.append(graph[a].isConnected(graph[b])).append("\n");
+            int u = Integer.parseInt(st.nextToken()), v = Integer.parseInt(st.nextToken()), weight = Integer.parseInt(st.nextToken());
+            Edge edge = new Edge(u,v,weight);
+            pq.add(edge);
         }
-        System.out.print(sb);
+        int totalWeight = 0;
+        while(!pq.isEmpty()) {
+            Edge edge = pq.poll();
+            boolean noCycle = union(edge.u, edge.v);
+            if(noCycle) {
+                totalWeight += edge.weight;
+            }
+        }
+        System.out.print(String.valueOf(totalWeight));
+    }
+
+    static int find(int node){
+        if(parent[node] != node) parent[node] = find(parent[node]);
+        return parent[node];
+    }
+
+    static boolean union(int node1, int node2){
+        int parent1 = find(node1), parent2 = find(node2);
+        if(parent1 != parent2) {
+            if (rank[parent1] > rank[parent2]) {
+                // 랭크 낮은 쪽을 높은 쪽에 합침
+                parent[parent2] = parent1;
+            } else {
+                parent[parent1] = parent2;
+                if (rank[parent1] == rank[parent2]) {
+                    rank[parent2]++;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }
