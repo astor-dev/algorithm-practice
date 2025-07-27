@@ -4,72 +4,71 @@ package playground;
 import java.io.*;
 import java.util.*;
 
-
 public class Main {
+
     static class Edge implements Comparable<Edge> {
-        int u;
-        int v;
-        int weight;
-        Edge(int u, int v, int weight) {
-            this.u = u;
-            this.v = v;
-            this.weight = weight;
+        int target;
+        int cost;
+        Edge(int target, int cost) {
+            this.target = target;
+            this.cost = cost;
         }
 
         @Override
-        public int compareTo(Edge target) {
-            return this.weight - target.weight;
+        public int compareTo(Edge target){
+            return this.cost - target.cost;
         }
     }
 
-    public static int[] rank;
-    public static int[] parent;
+    static List<List<Edge>> graph = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
+       BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+       StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int V = Integer.parseInt(st.nextToken()), E = Integer.parseInt(st.nextToken());
-        rank = new int[V+1];
-        parent = new int[V+1];
+       int N = Integer.parseInt(st.nextToken()), E = Integer.parseInt(st.nextToken());
+       for(int i = 0; i <= N; i ++) graph.add(new ArrayList<>());
+       for(int i = 0; i < E; i++) {
+           st = new StringTokenizer(br.readLine());
+           int u = Integer.parseInt(st.nextToken()), v = Integer.parseInt(st.nextToken()), weight = Integer.parseInt(st.nextToken());
+           graph.get(u).add(new Edge(v, weight));
+           graph.get(v).add(new Edge(u, weight));
+       }
+
+       st = new StringTokenizer(br.readLine());
+       int v1 = Integer.parseInt(st.nextToken()), v2= Integer.parseInt(st.nextToken());
+
+       int startToV1 = dijkstra(1)[v1];
+       int StartToV2 = dijkstra(1)[v2];
+       int v1ToV2 = dijkstra(v1)[v2];
+       int v1ToEnd = dijkstra(v1)[N];
+       int v2ToEnd = dijkstra(v2)[N];
+
+       if((startToV1 == Integer.MAX_VALUE || v1ToV2 == Integer.MAX_VALUE || v2ToEnd == Integer.MAX_VALUE)
+               && (StartToV2 == Integer.MAX_VALUE || v1ToV2 == Integer.MAX_VALUE || v1ToEnd == Integer.MAX_VALUE)) {
+           System.out.print(-1);
+           return;
+       }
+       int result = Math.min(startToV1 + v1ToV2 + v2ToEnd, StartToV2 + v1ToV2 + v1ToEnd);
+       System.out.print(result);
+   }
+   static int[] dijkstra (int startNode) {
+        int[] distanceGraph = new int[graph.size()+1];
+        for(int i = 0; i <= graph.size(); i++) distanceGraph[i] = Integer.MAX_VALUE;
         PriorityQueue<Edge> pq = new PriorityQueue<>();
-        for(int i = 1; i <= V; i++) parent[i] = i;
-        while(E-- > 0) {
-            st = new StringTokenizer(br.readLine());
-            int u = Integer.parseInt(st.nextToken()), v = Integer.parseInt(st.nextToken()), weight = Integer.parseInt(st.nextToken());
-            Edge edge = new Edge(u,v,weight);
-            pq.add(edge);
-        }
-        int totalWeight = 0;
+        distanceGraph[startNode] = 0;
+        pq.add(new Edge(startNode, 0));
         while(!pq.isEmpty()) {
             Edge edge = pq.poll();
-            boolean noCycle = union(edge.u, edge.v);
-            if(noCycle) {
-                totalWeight += edge.weight;
-            }
-        }
-        System.out.print(String.valueOf(totalWeight));
-    }
-
-    static int find(int node){
-        if(parent[node] != node) parent[node] = find(parent[node]);
-        return parent[node];
-    }
-
-    static boolean union(int node1, int node2){
-        int parent1 = find(node1), parent2 = find(node2);
-        if(parent1 != parent2) {
-            if (rank[parent1] > rank[parent2]) {
-                // 랭크 낮은 쪽을 높은 쪽에 합침
-                parent[parent2] = parent1;
-            } else {
-                parent[parent1] = parent2;
-                if (rank[parent1] == rank[parent2]) {
-                    rank[parent2]++;
+            if(distanceGraph[edge.target] < edge.cost) continue;
+            for (Edge adjEdge : graph.get(edge.target)) {
+                int cost = adjEdge.cost + edge.cost;
+                if(distanceGraph[adjEdge.target] > cost) {
+                    distanceGraph[adjEdge.target] = cost;
+                    pq.add(new Edge(adjEdge.target, cost));
                 }
             }
-            return true;
         }
-        return false;
-    }
+        return distanceGraph;
+   }
 }
