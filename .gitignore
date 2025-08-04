@@ -10,6 +10,8 @@
 .idea
 .vscode
 .DS_Store
+*.iml
+out
 
 # Ignore Gradle project-specific cache directory
 .gradle
