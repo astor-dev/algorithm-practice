@@ -1,86 +1,43 @@
 import java.io.*;
 import java.util.*;
-import java.util.stream.*;
 
-public class Main{ 
 
-//     static variables
-    static int n, m;
-    static ArrayList<Integer>[] graph;
-    static final int INF = Integer.MAX_VALUE;
-//     ================
-    public static void main(String[] args) throws Exception {
-        try{                           
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            n = Integer.parseInt(br.readLine()); //노드의 개수
-            m = Integer.parseInt(br.readLine()); //엣지의 개수
-            
-            StringTokenizer st;
-            graph = new ArrayList[n+1];
-            //그래프 초기화
-            for(int i = 0; i < n+1; i++){
-                graph[i] = new ArrayList<Integer>();
-                for(int j = 0;  j < n+1; j++){
-                    graph[i].add(INF);
-                }
+public class Main {
+    static BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+    static StringTokenizer stringTokenizer;
+    static StringBuilder stringBuilder = new StringBuilder();
+    static int INF = 1_000_000_000;
+    public static void main(String[] args) throws IOException {
+        int v = Integer.parseInt(bufferedReader.readLine()), e = Integer.parseInt(bufferedReader.readLine());
+        int[][] graph = new int[v+1][v+1];
+        for (int i = 1; i <= v; i++) {
+            for (int j = 1; j <= v; j++){
+                if (i == j) graph[i][j] = 0;
+                else graph[i][j] = INF;
             }
-            
-            //입력 받기
-            for(int i = 0; i < m; i++){
-                st = new StringTokenizer(br.readLine());                                
-                int startNode = Integer.parseInt(st.nextToken());
-                int endNode = Integer.parseInt(st.nextToken());
-                int weight = Integer.parseInt(st.nextToken());
-                graph[startNode].set(endNode, Math.min(weight, graph[startNode].get(endNode)));
-            }            
-            floydWarshall();
-            //답 출력
-            printGraph();
-            
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();            
+        }
+        for (int i = 1; i <= e; i++) {
+            stringTokenizer = new StringTokenizer(bufferedReader.readLine());
+            int from = Integer.parseInt(stringTokenizer.nextToken());
+            int to = Integer.parseInt(stringTokenizer.nextToken());
+            int weight = Integer.parseInt(stringTokenizer.nextToken());
+            graph[from][to] = Math.min(weight, graph[from][to]);
         }
 
-    }
-//     static methods        
-    static void floydWarshall(){
-        for(int passingNode = 1; passingNode < n+1; passingNode++){
-            for(int startNode = 1; startNode < n+1; startNode++){
-                for(int endNode = 1; endNode < n+1; endNode++){
-                    if(startNode == endNode || passingNode == startNode || passingNode == endNode){
-                        continue;
-                    }
-                    if(graph[startNode].get(passingNode)==INF || graph[passingNode].get(endNode)==INF){
-                        continue;
-                    }
-                    int oldValue = graph[startNode].get(endNode);
-                    int targetValue = graph[startNode].get(passingNode) + graph[passingNode].get(endNode);
-                    
-                    if(targetValue < oldValue){
-                        // System.out.println("현재 passingNode: " + passingNode + ", startNode: " + startNode);
-                        graph[startNode].set(endNode, targetValue);
-                    }
+        for (int k = 1; k <= v; k++) {
+            for (int i = 1; i <= v ; i++) {
+                for (int j = 1; j <= v; j++) {
+                    graph[i][j] = Math.min(graph[i][j],graph[i][k] + graph[k][j]);
                 }
             }
         }
+        for (int i = 1; i <= v; i++) {
+            for (int j = 1; j <= v; j++){
+                if(graph[i][j] == INF) stringBuilder.append(0).append(" ");
+                else stringBuilder.append(graph[i][j]).append(" ");
+            }
+            stringBuilder.append("\n");
+        }
+        System.out.println(stringBuilder.toString());
     }
-    
-    static void printGraph(){
-            for(int i = 1; i< n+1; i++){
-                for(int j = 1; j < n; j++){
-                    if(graph[i].get(j) == INF){
-                        System.out.print("0 ");
-                    } else{
-                        System.out.print(String.valueOf(graph[i].get(j)) + " ");
-                    }
-                }
-                if(graph[i].get(n) == INF){
-                    System.out.println("0");
-                } else{
-                    System.out.println(String.valueOf(graph[i].get(n)));                    
-                }               
-            }        
-    }
-//     ==============
 }
