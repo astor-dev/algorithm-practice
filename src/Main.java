@@ -1,31 +1,36 @@
 import java.io.*;
 import java.util.*;
-import java.util.stream.*;
 
 public class Main{
+    
+    /*
+    그냥 관찰력이 중요했던 문제
+    점화식이 안떠오르면, 직접 그려가면서 현상적으로 특징을 추려가자
+     */
     public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer stringTokenizer;
         StringBuilder stringBuilder = new StringBuilder();
-
-        int n = Integer.parseInt(br.readLine());
-
-        int[] oneConsecutiveTable = new int[n+2];
-        int[] twoConsecutiveTable = new int[n+2];
-        Arrays.fill(oneConsecutiveTable, 0);
-        Arrays.fill(twoConsecutiveTable, 0);
-
-//             i = 2: 1번째칸 오른 상태
-        for(int i = 1; i<n+1; i++){
-            int value = Integer.parseInt(br.readLine());
-//                 1연속에 있는 값에 value 더해서 2연속 테이블에 넣기
-            twoConsecutiveTable[i+1] = Math.max(twoConsecutiveTable[i+1], oneConsecutiveTable[i] + value);
-//                 1연속-1에 있는 값에 value 더해서 1연속 테이블에 넣기
-            oneConsecutiveTable[i+1] = Math.max(oneConsecutiveTable[i+1], oneConsecutiveTable[i-1] + value);
-//                 2연속에 있는 값-1에 value 더해서 1연속 테이블에 넣기
-            oneConsecutiveTable[i+1] = Math.max(oneConsecutiveTable[i+1], twoConsecutiveTable[i-1] + value);
+        stringTokenizer = new StringTokenizer(bufferedReader.readLine());
+        int n = Integer.parseInt(stringTokenizer.nextToken()), m = Integer.parseInt(stringTokenizer.nextToken());
+        int[][] dp =  new int[n+1][m+1];
+        int answer = 0;
+        for (int i = 1; i <= n; i++) {
+            String string = bufferedReader.readLine();
+            for (int j = 1; j <= m; j++) {
+                int number = string.charAt(j-1) - '0';
+                if (number == 0) {
+                    dp[i][j] = 0;
+                    continue;
+                }
+                int left = dp[i][j-1];
+                int up = dp[i-1][j];
+                int upLeft = dp[i-1][j-1];
+                dp[i][j] = Math.min(Math.min(left, up), upLeft) + 1;
+                answer = Math.max(dp[i][j], answer);
+            }
         }
-        System.out.println(Math.max(oneConsecutiveTable[n+1], twoConsecutiveTable[n+1]));
+        System.out.println(answer*answer);
+
     }
 }
-
