@@ -37,7 +37,7 @@ public class Main {
 //import java.util.*;
 //
 //
-//public class Main {
+//public class main.java.Main {
 //
 //    public static void main(String[] args) throws IOException {
 //        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
