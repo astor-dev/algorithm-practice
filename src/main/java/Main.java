@@ -2,36 +2,47 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+
+    static class Edge {
+        int from;
+        int to;
+        int distance;
+        Edge(int from, int to, int distance) {
+            this.from = from;
+            this.to = to;
+            this.distance = distance;
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st;
         StringBuilder sb = new StringBuilder();
-        String s1 = br.readLine();
-        String s2 = br.readLine();
+        int n = Integer.parseInt(br.readLine());
+        int v = Integer.parseInt(br.readLine());
+        List<Edge> edges = new ArrayList<>();
 
-        int[][] dp = new int[s1.length()+1][s2.length()+1];
-        for (int i = 1; i <= s1.length(); i++) {
-            for (int j = 1; j <= s2.length(); j++) {
-                dp[i][j] = (s1.charAt(i-1) == s2.charAt(j-1)) ? dp[i-1][j-1] + 1 : Math.max(dp[i-1][j], dp[i][j-1]);
+        // bellmanford
+        int startNode = 1;
+        int INF = 100_000_000;
+        int[] dist = new int[n+1];
+        Arrays.fill(dist, INF);
+        dist[startNode] = 0;
+        boolean hasCycle = false;
+        // NOTE: v-1 회 반복!!
+        for (int i = 1; i <= v; i++) {
+            for(Edge edge: edges) {
+                int newDist = dist[edge.from] + edge.distance;
+                if(dist[edge.from] != INF && dist[edge.to] > newDist) {
+                    dist[edge.to] = newDist;
+                    // 1회 더 실행 시 갱신이 발생하는 경우 사이클 존재
+                    if(i==v) {
+                        hasCycle = true;
+                    }
+                }
+
             }
-        }
-        Stack<Character> stack = new Stack<>();
-        int i = s1.length();
-        int j = s2.length();
 
-        while (i > 0 && j > 0) {
-            if (s1.charAt(i - 1) == s2.charAt(j - 1)) {
-                stack.push(s1.charAt(i - 1));
-                i--; j--;
-            } else if (dp[i - 1][j] > dp[i][j - 1]) {
-                i--;
-            } else {
-                j--;
-            }
         }
-
-        sb.append(dp[s1.length()][s2.length()]).append("\n");
-        while (!stack.isEmpty()) sb.append(stack.pop());
-        System.out.println(sb);
     }
 }
