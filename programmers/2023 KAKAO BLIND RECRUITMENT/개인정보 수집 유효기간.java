@@ -17,7 +17,7 @@ class Solution {
             String[] splitPrivacy = privacy.split(" ");
             int month = termsMap.get(splitPrivacy[1]);
             LocalDate exp = LocalDate.parse(splitPrivacy[0], formatter);
-            if(now.plusMonths(month).isAfter(exp)) {
+            if(exp.plusMonths(month).isBefore(now) || exp.plusMonths(month).isEqual(now)) {
                 answerList.add(index);
             }
             index++;
