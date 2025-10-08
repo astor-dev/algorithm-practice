@@ -2,14 +2,14 @@ import java.util.*;
 
 class Solution {
     /**
-     트리는 함정
-     트리의 노드 수에 해당하는 비트로 표현 가능한가?
-     1. x                    1(2^1 -1) 2
-     2. x1x                  7(2^3-1)  4
-     3. x1x1x1x              127(2^7-1) 8
-     4. x1x1x1x1x1x1x1x      2^15 - 1  16
+    트리는 함정
+    트리의 노드 수에 해당하는 비트로 표현 가능한가?
+    1. x                    1(2^1 -1) 2
+    2. x1x                  7(2^3-1)  4
+    3. x1x1x1x              127(2^7-1) 8
+    4. x1x1x1x1x1x1x1x      2^15 - 1  16
      부모가 1이여야함
-     */
+    */
     public int[] solution(long[] numbers) {
         StringBuilder sb;
         int[] answer = new int[numbers.length];
