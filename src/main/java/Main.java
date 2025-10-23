@@ -1,123 +1,91 @@
-import java.util.*;
-
 class Main {
-    /**
-     표의 좌표가 값을 지닐 때, 참조형 변수를 지님(instance)
-     참조형 변수 <-> 좌표 값을 양방향 참조
-     MERGE/UNMERGE 시 이를 통해 접근
-     */
 
-    static final String EMPTY = "EMPTY";
+    static class Node {
+        int value;
+        Node left;
+        Node right;
 
-    static class XY {
-        int x;
-        int y;
-        XY(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-    }
-
-    static class CellValue {
-        String value;
-        List<XY> refXys;
-        CellValue(String value) {
+        Node(int value) {
             this.value = value;
-            this.refXys = new ArrayList<>();
         }
     }
 
-    // 1-based
-    static CellValue[][] chart = new CellValue[51][51];
-    static Map<String, List<CellValue>> valueMap = new HashMap<>();
-    static List<String> printResult = new ArrayList<>();
-    public String[] solution(String[] commands) {
-        StringTokenizer st;
-        for(String command: commands) {
-            st = new StringTokenizer(command);
-            String operation = st.nextToken();
-            switch(operation) {
+    static class BinarySearchTree {
+        Node head;
 
-                case "UPDATE":
-                    String v1 = st.nextToken();
-                    String v2 = st.nextToken();
-                    if(st.hasMoreTokens()) {
-                        // UPDATE r c value
-                        update(Integer.parseInt(v1), Integer.parseInt(v2), st.nextToken());
+        void add(int value) {
+            Node node = new Node(value);
+            if(head == null) {
+                head = node;
+                return;
+            }
+            Node parent = head;
+            while(true) {
+                if(node.value > parent.value) {
+                    if(parent.right != null) {
+                        parent = parent.right;
                     } else {
-                        // UPDATE value1 value2
-                        update(v1, v2);
+                         parent.right = node;
+                         break;
                     }
-                    break;
-                case "MERGE":
-                    merge(
-                            Integer.parseInt(st.nextToken()),
-                            Integer.parseInt(st.nextToken()),
-                            Integer.parseInt(st.nextToken()),
-                            Integer.parseInt(st.nextToken())
-                    );
-                    break;
-                case "UNMERGE":
-                    break;
-                case "PRINT":
-                    print(
-                            Integer.parseInt(st.nextToken()),
-                            Integer.parseInt(st.nextToken())
-                    );
-                    break;
+                } else {
+                    if(parent.left != null) {
+                        parent = parent.left;
+                    } else {
+                        parent.left = node;
+                        break;
+                    }
+                }
             }
         }
-        String[] answer = printResult.toArray(new String[0]);
-        return answer;
-    }
 
-    static void update(int r, int c, String value) {
-        XY xy = new XY(r, c);
-        CellValue cell = chart[xy.x][xy.y];
-        if(cell != null) {
-            cell.value = value;
-
-        } else {
-            cell = new CellValue(value);
-            valueMap.computeIfAbsent(value, k -> new ArrayList<>()).add(cell);
-        }
-        chart[xy.x][xy.y] = cell;
-        cell.refXys.add(xy);
-    }
-
-    static void update(String value1, String value2) {
-        List<CellValue> cellValues = valueMap.get(value1);
-        if(cellValues != null) {
-            for(CellValue cellValue : cellValues) {
-                cellValue.value = value2;
+        void remove(int value) {
+            if(head == null) {
+                return;
             }
-        }
-    }
-
-    static void merge(int r1, int c1, int r2, int c2) {
-        CellValue cellValue1 = chart[r1][c1];
-        CellValue cellValue2 = chart[r2][c2];
-        if(cellValue1 == null && cellValue2 == null) {
-            return;
-        }
-        if(cellValue1 == null && cellValue2 != null) {
-            chart[r1][c1] = cellValue2;
-            cellValue2.refXys.add(new XY(r2,c2));
-        } else {
-            if(cellValue2 != null) {
-                valueMap.get(cellValue2.value).remove(cellValue2);
+            Node parent;
+            Node node = head;
+            while(node.value != value ) {
+                if(value > node.value) {
+                    parent = node;
+                    node = node.right;
+                } else {
+                    parent = node;
+                    node = node.left;
+                }
+                if(node == null) return;
             }
-            chart[r2][c2] = cellValue1;
-            cellValue1.refXys.add(new XY(r1,c1));
+
+        }
+
+        public void inOrder() {
+            if(head == null) {
+                return;
+            }
+            inOrder(head);
+        }
+
+        private void inOrder(Node node) {
+            if(node == null) return;
+            inOrder(node.left);
+            System.out.println(node.value);
+            inOrder(node.right);
         }
     }
 
-    static void print(int r, int c) {
-        CellValue valueOrNull = chart[r][c];
-        if(valueOrNull == null) {
-            printResult.add(EMPTY);
-        } else {
-            printResult.add(valueOrNull.value);
-        }
+
+
+
+    public static void main(String[] args) {
+        BinarySearchTree bst = new BinarySearchTree();
+        bst.add(10);
+        bst.add(20);
+        bst.add(20);
+        bst.add(20);
+        bst.add(5);
+        bst.add(1);
+        bst.add(100);
+        bst.add(-10);
+        bst.inOrder();
     }
 }
